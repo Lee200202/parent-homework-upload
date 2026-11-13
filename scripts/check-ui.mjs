@@ -13,15 +13,34 @@ function rpcProxy(adapter,ok,fail){
  return new Proxy({}, {get(_,key){
   if(key==='withSuccessHandler')return handler=>rpcProxy(adapter,handler,fail);
   if(key==='withFailureHandler')return handler=>rpcProxy(adapter,ok,handler);
-  return(...args)=>{Promise.resolve().then(()=>adapter(key,...JSON.parse(JSON.stringify(args)))).then(ok,fail)};
+  return(...args)=>{Promise.resolve().then(()=>adapter(key,...JSON.parse(JSON.stringify(args)))).then(value=>ok(JSON.parse(JSON.stringify(value))),fail)};
  }});
 }
-function page(file,adapter){const w=new Window({url:'https://upload.example/',settings:{enableJavaScriptEvaluation:true,suppressInsecureJavaScriptEnvironmentWarning:true}});w.Option=function(text,value){const option=w.document.createElement('option');option.text=text;option.value=value;return option};w.setInterval=()=>0;w.matchMedia=()=>({matches:false,addEventListener(){}});w.google={script:{run:rpcProxy(adapter)}};w.URL.createObjectURL=()=> 'blob:local-qa';w.URL.revokeObjectURL=()=>{};w.document.write(fs.readFileSync(new URL('../apps-script/'+file,import.meta.url),'utf8').replace(/<script>([\s\S]*?)<\/script>/g,''));const scripts=[...fs.readFileSync(new URL('../apps-script/'+file,import.meta.url),'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]);w.eval(scripts.join('\n')+'\nwindow.qa={addFiles,replaceUpload,historyRender,get items(){return items},get busy(){return busy},get historyLoading(){return historyLoading},set historyFiles(v){historyFiles=v}};');return w}
+function page(file,adapter){const w=new Window({url:'https://upload.example/',settings:{enableJavaScriptEvaluation:true,suppressInsecureJavaScriptEnvironmentWarning:true}});w.Option=function(text,value){const option=w.document.createElement('option');option.text=text;option.value=value;return option};w.setInterval=()=>0;w.matchMedia=()=>({matches:false,addEventListener(){}});w.google={script:{run:rpcProxy(adapter)}};w.URL.createObjectURL=()=> 'blob:local-qa';w.URL.revokeObjectURL=()=>{};w.document.write(fs.readFileSync(new URL('../apps-script/'+file,import.meta.url),'utf8').replace(/<script>([\s\S]*?)<\/script>/g,''));const scripts=[...fs.readFileSync(new URL('../apps-script/'+file,import.meta.url),'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]);w.eval(scripts.join('\n')+'\nwindow.qa={addFiles,replaceUpload,historyRender,setFlipValue,tickDeadline,loadConfig,get items(){return items},get busy(){return busy},get historyLoading(){return historyLoading},set historyFiles(v){historyFiles=v}};');return w}
 async function waitFor(fn,label,limit=90000){const start=Date.now();while(!fn()){if(Date.now()-start>limit)throw new Error('Timeout: '+label);await new Promise(resolve=>setTimeout(resolve,100))}}
 const window=page('Index.html',live?remote:mock);const $=id=>window.document.getElementById(id);
-await waitFor(()=>$('student').value==='huang-yun-xi','load config');
+await waitFor(()=>$('student').value==='huang-yun-xi','load config',live?90000:5000);
 assert.equal($('greeting').textContent,'雲晞你好');
 assert.equal($('publisher-label').textContent,'南一版');
+assert.equal($('deadline-box').hidden,false);
+assert.equal($('due-seconds').querySelectorAll('.flip-part').length,2);
+window.qa.setFlipValue('due-seconds','42','秒');
+const firstGlyph=$('due-seconds').firstChild;
+window.qa.setFlipValue('due-seconds','42','秒');
+assert.ok($('due-seconds').firstChild===firstGlyph,'Unchanged countdown value must not rebuild the card');
+window.qa.setFlipValue('due-seconds','23','秒');
+window.qa.setFlipValue('due-seconds','22','秒');
+assert.equal($('due-seconds').querySelectorAll('.turn-top').length,1);
+assert.equal($('due-seconds').getAttribute('aria-label'),'22秒');
+await new Promise(resolve=>setTimeout(resolve,550));
+assert.equal($('due-seconds').querySelectorAll('.flip-part').length,2);
+assert.equal($('due-seconds').lastChild.textContent,'22');
+window.matchMedia=()=>({matches:true,addEventListener(){}});
+window.qa.setFlipValue('due-seconds','21','秒');
+assert.equal($('due-seconds').querySelectorAll('.turn-top').length,0,'Reduced-motion mode must remain static');
+window.matchMedia=()=>({matches:false,addEventListener(){}});
+if(!live){$('upload-notes').value='尚未送出的附註';config.revision++;await window.qa.loadConfig();assert.equal($('upload-notes').value,'尚未送出的附註','Refreshing settings must preserve draft notes')}
+
 assert.ok($('content').textContent.includes('2-2 根式的運算'));
 $('content').value='2-2';$('content').dispatchEvent(new window.Event('change'));
 assert.match($('filename-preview').textContent,/國二上數學_黃雲晞_南一版_作業_2-2 根式的運算/);
@@ -43,5 +62,5 @@ if(live){
   result=await remote('listUploads','huang-yun-xi');const replaced=result.files.find(x=>x.id===file.id);assert.ok(replaced);assert.equal(replaced.size,replacement.length);const state=await remote('getUploadStatus',window.qa.items[0].requestId);assert.equal(state.md5,crypto.createHash('md5').update(replacement).digest('hex'));
   await remote('trashUpload','huang-yun-xi',file.id);result=await remote('listUploads','huang-yun-xi');assert.equal(result.files.some(x=>x.id===file.id),false);
   console.log('LIVE PASS — exact frontend scripts → Drive; local preview; generated metadata; history; notes; replace existing ID; checksum; trash.');
-}else console.log('UI PASS — greeting, publisher sections, custom fields, view toggle, local PDF preview, upload metadata, receipt.');
+}else console.log('UI PASS — flip clock, reduced motion, unchanged-frame stability, draft notes, publisher sections, custom fields, view toggle, preview and upload receipt.');
 await window.happyDOM.close();
