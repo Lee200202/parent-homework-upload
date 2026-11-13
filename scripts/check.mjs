@@ -76,6 +76,7 @@ assert.equal(requests.length,count,'Retry after completion must not create a sec
 
 assert.equal(run('validSignature_([137,80,78,71,13,10,26,10],"image/png")'),true);
 assert.equal(run('validSignature_([255,216,255],"image/jpeg")'),true);
+assert.equal(run('mimeFor_("photo.jfif")'),'image/jpeg');
 assert.equal(run('validSignature_([60,115,118,103],"image/png")'),false);
 assert.throws(() => run('beginUpload({...meta,requestId:"bad"})'),/識別碼/);
 const session = JSON.parse(cache.get('upload:'+meta.requestId));session.done=false;cache.set(session.key,JSON.stringify(session));

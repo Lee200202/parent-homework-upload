@@ -179,7 +179,7 @@ function customLabel_(text, field) {
 }
 function mimeFor_(name) {
   const ext = name.split('.').pop().toLowerCase();
-  const mimes = { pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic', heif: 'image/heif' };
+  const mimes = { pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', jfif: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic', heif: 'image/heif' };
   if (!mimes[ext]) throw new Error('請使用 JPG、PNG、WebP、HEIC 照片或 PDF。');
   return mimes[ext];
 }

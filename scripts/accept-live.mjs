@@ -12,7 +12,9 @@ async function call(action,...args){
 const config=await call('config');
 assert.equal(config.students[0].greetingName,'雲晞');
 const reports=[];
-const tests=process.argv.includes('--large')?[
+const tests=process.argv.includes('--jfif')?[
+  {file:'qa/photo-acceptance.jfif',category:'homework',content:'2-2',device:'desktop'}
+]:process.argv.includes('--large')?[
   {file:'qa/驗收上限10MB.pdf',category:'exam',content:'段考考卷',device:'desktop'}
 ]:[
   {file:'qa/驗收考卷.pdf',category:'homework',content:'2-2',device:'desktop'},
@@ -31,10 +33,12 @@ for(const test of tests){
   assert.equal(state.offset,buffer.length);
   const retry=await call('beginUpload',meta);assert.equal(retry.done,true);assert.equal(retry.name,state.name);
   const status=await call('getUploadStatus',id);assert.equal(status.done,true);
+  assert.ok(Number.isFinite(Date.parse(state.receivedAt)),'Completion timestamp must come from the server');
   const checksum=crypto.createHash('md5').update(buffer).digest('hex');assert.equal(state.md5,checksum,'Google Drive checksum must match local file');
   const history=await call('listUploads',config.students[0].id);assert.ok(history.files.some(file=>file.name===state.name&&file.size===buffer.length));
   const report={name:state.name,size:buffer.length,md5:state.md5,receipt:state.receipt,progress,device:test.device};
   reports.push(report);console.log('PASS '+JSON.stringify(report));
+  if(process.argv.includes('--cleanup')){const ownFile=history.files.find(file=>file.name===state.name);await call('trashUpload',config.students[0].id,ownFile.id);console.log('Moved this test file to Drive trash.')}
 }
 fs.mkdirSync('.local',{recursive:true});
-fs.writeFileSync('.local/live-acceptance'+(process.argv.includes('--large')?'-large':'')+'.json',JSON.stringify({testedAt:new Date().toISOString(),reports},null,2));
+fs.writeFileSync('.local/live-acceptance'+(process.argv.includes('--jfif')?'-jfif':process.argv.includes('--large')?'-large':'')+'.json',JSON.stringify({testedAt:new Date().toISOString(),reports},null,2));
