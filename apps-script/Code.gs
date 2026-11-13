@@ -3,7 +3,7 @@ const SETTINGS = Object.freeze({
   folderId: '18KkBjVH9lslNs7YmA83Vk2vm3SGqAy9X',
   maxBytes: 10 * 1024 * 1024,
   chunkBytes: 1024 * 1024,
-  students: [{ id: 'huang-yun-xi', name: '黃雲晞', course: '國二數學' }]
+  students: [{ id: 'huang-yun-xi', name: '黃雲晞', greetingName: '雲晞', course: '國二數學' }]
 });
 
 function doGet() {
@@ -24,31 +24,34 @@ function beginUpload(meta) {
     throw new Error('每個檔案須介於 1 byte 與 10 MB 之間。');
   }
   if (!/^[a-zA-Z0-9_-]{16,80}$/.test(meta.requestId || '')) throw new Error('上傳識別碼無效，請重新選檔。');
-  const name = cleanName_(meta.name);
-  const mime = mimeFor_(name);
+  const extension = String(meta.extension || (typeof meta.name === 'string' ? meta.name.split('.').pop() : '')).toLowerCase();
+  const mime = mimeFor_('file.' + extension);
+  if (!meta.submission) throw new Error('頁面已更新，請重新整理後選擇類型與內容，再重新選檔。');
+  const submission = submission_(meta.submission);
+  const identity = JSON.stringify({ studentId: student.id, size: meta.size, extension: extension, submission: submission });
   const key = 'upload:' + meta.requestId;
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
     const old = getSession_(key);
     if (old) {
-      if (old.studentId !== student.id || old.size !== meta.size || old.originalName !== name) throw new Error('上傳識別碼已使用。');
+      if (old.identity !== identity) throw new Error('上傳識別碼已使用。');
       return publicSession_(old);
     }
     const folder = studentFolder_(student);
     const stamp = Utilities.formatDate(new Date(), 'Asia/Taipei', 'yyyyMMdd_HHmmss');
-    const storedName = stamp + '_' + meta.requestId.slice(0, 8) + '_' + name;
+    const storedName = [student.course, student.name, submission.category, submission.content, submission.device, stamp, String(submission.sequence).padStart(2, '0'), meta.requestId.slice(0, 8)].join('_') + '.' + extension;
     const response = UrlFetchApp.fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id,name,size,md5Checksum', {
       method: 'post', contentType: 'application/json; charset=UTF-8',
       headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken(), 'X-Upload-Content-Type': mime, 'X-Upload-Content-Length': String(meta.size) },
-      payload: JSON.stringify({ name: storedName, parents: [folder.getId()], description: '家長作業繳交｜' + student.course + '｜' + student.name }),
+      payload: JSON.stringify({ name: storedName, parents: [folder.getId()], description: ['家長作業繳交', student.course, student.name, submission.category, submission.content, '上傳裝置：' + submission.device].join('｜') }),
       muteHttpExceptions: true, followRedirects: false
     });
     if (response.getResponseCode() !== 200) throw new Error('目前無法建立上傳，請稍後重試或聯絡老師。');
     const headers = response.getAllHeaders();
     const url = headers.Location || headers.location;
     if (!url || !/^https:\/\/www\.googleapis\.com\//.test(url)) throw new Error('無法取得上傳連線。');
-    const state = { key: key, requestId: meta.requestId, studentId: student.id, originalName: name, name: storedName, mime: mime, size: meta.size, offset: 0, url: url, done: false };
+    const state = { key: key, requestId: meta.requestId, identity: identity, name: storedName, mime: mime, size: meta.size, offset: 0, url: url, done: false };
     putSession_(state);
     return publicSession_(state);
   } finally { lock.releaseLock(); }
@@ -115,7 +118,7 @@ function applyResponse_(state, response) {
 }
 
 function publicSession_(state) {
-  return { requestId: state.requestId, offset: state.offset, size: state.size, done: state.done, receipt: state.done ? state.requestId.slice(0, 8).toUpperCase() : null };
+  return { requestId: state.requestId, name: state.name, offset: state.offset, size: state.size, done: state.done, receipt: state.done ? state.requestId.slice(0, 8).toUpperCase() : null };
 }
 function getSession_(key) {
   const text = CacheService.getScriptCache().get(key);
@@ -128,9 +131,21 @@ function studentFolder_(student) {
   const folders = root.getFoldersByName(name);
   return folders.hasNext() ? folders.next() : root.createFolder(name);
 }
-function cleanName_(name) {
-  if (typeof name !== 'string' || !name.trim()) throw new Error('檔案名稱無效。');
-  return name.replace(/[\x00-\x1f\x7f/\\<>:"|?*]/g, '_').trim().slice(-160);
+function submission_(input) {
+  if (!input || !['homework', 'exam', 'custom'].includes(input.category)) throw new Error('請選擇考試、作業或自訂類型。');
+  const category = input.category === 'custom' ? customLabel_(input.customCategory, '類型') : input.category === 'exam' ? '考試' : '作業';
+  const presets = ['2-2', '2-3', '3-1', '3-2', '段考考卷'];
+  if (input.content !== 'custom' && !presets.includes(input.content)) throw new Error('請選擇繳交內容。');
+  const content = input.content === 'custom' ? customLabel_(input.customContent, '內容') : input.content;
+  if (!['mobile', 'desktop'].includes(input.device)) throw new Error('無法辨識上傳裝置，請重新整理。');
+  if (!Number.isInteger(input.sequence) || input.sequence < 1 || input.sequence > 20) throw new Error('檔案序號無效。');
+  return { category: category, content: content, device: input.device === 'mobile' ? '手機' : '電腦', sequence: input.sequence };
+}
+function customLabel_(text, field) {
+  if (typeof text !== 'string' || !text.trim() || text.trim().length > 30) throw new Error('請填寫自訂' + field + '（1～30 字）。');
+  const clean = text.trim().replace(/[\x00-\x1f\x7f/\\<>:"|?*]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!clean) throw new Error('請填寫有效的自訂' + field + '。');
+  return clean;
 }
 function mimeFor_(name) {
   const ext = name.split('.').pop().toLowerCase();
