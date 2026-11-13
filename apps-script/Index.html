@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>作業繳交・數學家教</title>
+  <style>
+    :root{font-family:Inter,"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;color:#233832;background:#f5f6f2;--bg:#f5f6f2;--card:#fff;--ink:#233832;--muted:#758079;--line:#e4e9e2;--soft:#f3f6f0;--accent:#2b6754;--accent-soft:#e9f1e9;--error:#b84339;--shadow:0 16px 70px #243e2d08;color-scheme:light}
+    :root[data-theme=dark]{color-scheme:dark;--bg:#141d1a;--card:#1d2924;--ink:#e4ede7;--muted:#a5b4aa;--line:#34433a;--soft:#24322b;--accent:#a5d4b8;--accent-soft:#2e4436;--error:#ffaba1;--shadow:0 16px 70px #0002;color:var(--ink);background:var(--bg)}
+    *{box-sizing:border-box}body{margin:0;min-width:280px;min-height:100vh;background:var(--bg);color:var(--ink);transition:background .2s,color .2s}button,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.5}button,select,a{touch-action:manipulation}button:focus-visible,select:focus-visible,a:focus-visible,label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:4px}svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.6}.shell{width:min(100% - 48px,760px);margin:auto}.topbar{display:flex;align-items:center;justify-content:space-between;padding:32px 0 26px}.brand{display:flex;gap:10px;align-items:center;font-size:14px;font-weight:650;letter-spacing:.06em}.mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--accent)}.theme{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:30px;padding:9px 13px;font-size:12px}.theme svg{width:16px;height:16px}.intro{padding:15px 2px 25px}.eyebrow{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:650;letter-spacing:.12em;color:var(--accent);margin:0 0 12px}.eyebrow:before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent)}h1{font-size:clamp(30px,5vw,40px);font-weight:650;letter-spacing:-.04em;line-height:1.2;margin:0 0 12px}.intro p:last-child{color:var(--muted);font-size:14px;line-height:1.7;margin:0}.card{border:1px solid var(--line);background:var(--card);border-radius:22px;padding:30px;box-shadow:var(--shadow)}.student-row{display:flex;align-items:center;gap:16px;padding-bottom:22px;border-bottom:1px solid var(--line)}.student-label{font-size:12px;color:var(--muted);white-space:nowrap}.select-wrap{position:relative;flex:1}.select-wrap:after{content:'⌄';position:absolute;right:14px;top:10px;pointer-events:none;color:var(--muted)}select{width:100%;height:44px;padding:0 38px 0 14px;border:1px solid var(--line);border-radius:10px;color:var(--ink);background:var(--soft);appearance:none;font-size:14px}.hello{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:25px 0 20px}.hello h2{font-size:23px;font-weight:600;letter-spacing:-.04em;margin:0 0 7px}.hello p{font-size:13px;color:var(--muted);margin:0;line-height:1.6}.badge{font-size:11px;white-space:nowrap;color:var(--accent);padding:7px 10px;border-radius:20px;background:var(--accent-soft)}.drop{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:166px;border:1.5px dashed #bbcfc0;border-radius:14px;background:var(--soft);text-align:center;cursor:pointer;padding:24px 15px;transition:border-color .2s,background .2s}.drop:hover,.drop.drag{border-color:var(--accent);background:var(--accent-soft)}.drop:has(input:disabled){cursor:default;opacity:.6}.upload-icon{display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:var(--card);margin-bottom:13px;color:var(--accent)}.drop strong{font-size:14px;font-weight:600}.desktop-hint{font-size:12px;color:var(--muted);margin-top:7px}.drop small{font-size:11px;color:var(--muted);margin-top:10px}.file-input{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}.error-box{padding:12px 14px;margin:14px 0 0;border-radius:10px;border:1px solid var(--error);color:var(--error);font-size:12px;line-height:1.65;white-space:pre-line}.queue{margin:15px 0 0;padding:0;list-style:none}.file{display:grid;grid-template-columns:34px minmax(0,1fr) 30px;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}.file-icon{width:34px;height:40px;border-radius:8px;background:var(--soft);color:var(--accent);display:grid;place-items:center}.file-icon svg{width:19px;height:19px}.file-name{font-size:13px;font-weight:500;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin:0 0 5px}.file-meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px;line-height:1.5}.file-meta .failed{color:var(--error)}.file-meta .success{color:var(--accent)}.remove{display:grid;place-items:center;border:0;background:transparent;color:var(--muted);width:30px;height:34px;border-radius:7px}.remove:hover{background:var(--soft)}.remove svg{width:16px;height:16px}.done-icon{color:var(--accent);display:grid;place-items:center}.progress{height:4px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:9px}.progress span{height:100%;display:block;background:var(--accent);width:0;transition:width .25s}.actions{margin-top:22px}.primary{border:0;border-radius:11px;background:var(--accent);color:#fff;width:100%;min-height:49px;font-size:14px;font-weight:600;display:flex;justify-content:center;align-items:center;gap:9px;transition:filter .2s}.primary:hover:enabled{filter:brightness(1.1)}:root[data-theme=dark] .primary{color:#163524}.primary svg{width:17px;height:17px}.summary{text-align:center;margin:13px 0 0;color:var(--muted);font-size:11px;line-height:1.7}.summary.success{color:var(--accent);font-size:12px}.foot{display:flex;justify-content:space-between;padding:20px 3px 35px;color:var(--muted);font-size:10px;letter-spacing:.04em;gap:14px}.foot span{display:flex;gap:5px;align-items:center}.foot svg{width:12px;height:12px} [hidden]{display:none!important}.spinner{width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:520px){.shell{width:calc(100% - 32px)}.topbar{padding:22px 0 22px}.brand{font-size:12px}.intro{padding:10px 2px 22px}.card{padding:21px 18px;border-radius:18px}.student-row{gap:12px;padding-bottom:19px}.hello{margin:21px 0 18px}.hello h2{font-size:21px}.badge{font-size:10px;padding:6px 8px}.drop{min-height:155px}.desktop-hint{display:none}.foot{font-size:9px;padding-bottom:24px}.theme{padding:8px 10px}.file-meta{flex-wrap:wrap;gap:2px 10px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+  </style>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('math-upload-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){document.documentElement.dataset.theme='light'}</script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 5h10M7 19h10M16 5l-7 7 7 7"/></svg></span>數學家教</div>
+      <button class="theme" id="theme" type="button" aria-label="切換暗黑模式"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg><span id="theme-text">暗黑模式</span></button>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="title"><p class="eyebrow">HOMEWORK / 作業與考卷</p><h1 id="title">作業繳交</h1><p>選擇姓名，將今天的練習交給老師。</p></section>
+      <section class="card" aria-label="檔案上傳">
+        <div class="student-row"><label class="student-label" for="student">學生姓名</label><div class="select-wrap"><select id="student" disabled><option value="">正在載入名單…</option></select></div></div>
+        <div class="hello"><div><h2 id="greeting">你好，歡迎回來</h2><p>請在這裡上傳作業或考卷。</p></div><span class="badge" id="course" hidden></span></div>
+        <label class="drop" id="drop" for="files">
+          <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 15V3m-4 4 4-4 4 4M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg></span>
+          <strong>點選照片或 PDF</strong><span class="desktop-hint">也可以把檔案拖曳到這裡</span><small>每檔上限 10 MB · 可一次選擇多個檔案</small>
+          <input class="file-input" id="files" type="file" multiple accept=".jpg,.jpeg,.png,.webp,.heic,.heif,.pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf" aria-label="選擇照片或 PDF" disabled>
+        </label>
+        <div class="error-box" id="errors" role="alert" hidden></div>
+        <ul class="queue" id="queue" aria-label="待上傳檔案"></ul>
+        <div class="actions"><button class="primary" id="upload" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>開始上傳</span></button><p class="summary" id="summary" role="status" aria-live="polite">請等候「上傳成功」再關閉頁面。</p></div>
+      </section>
+    </main>
+    <footer class="foot"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></svg>檔案交給老師，學習慢慢累積。</span><span>一步一步，都算進步。</span></footer>
+  </div>
+  <script>
+    'use strict';
+    const $=id=>document.getElementById(id);
+    const icons={file:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',check:'<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>',remove:'<svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>'};
+    let config,items=[],busy=false;
+    function call(name,...args){return new Promise((resolve,reject)=>{if(!window.google?.script?.run){reject(new Error('上傳服務尚未連線，請使用老師提供的正式網址。'));return}google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e.message||'連線中斷，請重試。')))[name](...args)})}
+    function theme(){const dark=document.documentElement.dataset.theme==='dark';$('theme-text').textContent=dark?'明亮模式':'暗黑模式';$('theme').setAttribute('aria-label',dark?'切換明亮模式':'切換暗黑模式');$('theme').setAttribute('aria-pressed',String(dark))}
+    $('theme').addEventListener('click',()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('math-upload-theme',document.documentElement.dataset.theme)}catch(e){}theme()});theme();
+    function errors(text){$('errors').textContent=text;$('errors').hidden=!text}
+    function studentChanged(){const s=config?.students.find(s=>s.id===$('student').value);$('greeting').textContent=s?s.name+'你好':'你好，歡迎回來';$('course').hidden=!s;$('course').textContent=s?.course||'';render()}
+    function size(n){return n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(1)+' MB'}
+    function status(item){if(item.status==='success')return '上傳成功 · 收件碼 '+item.receipt;if(item.status==='failed')return item.error||'上傳未完成，請重試';if(item.status==='uploading')return item.percent===100?'正在確認存檔…':'正在接收 '+item.percent+'%';return '等待上傳'}
+    function render(){
+      const list=$('queue');list.replaceChildren();
+      items.forEach(item=>{
+        const li=document.createElement('li');li.className='file';
+        const icon=document.createElement('span');icon.className='file-icon';icon.setAttribute('aria-hidden','true');icon.innerHTML=icons.file;
+        const detail=document.createElement('div');const name=document.createElement('p');name.className='file-name';name.textContent=item.file.name;name.title=item.file.name;
+        const meta=document.createElement('div');meta.className='file-meta';const bytes=document.createElement('span');bytes.textContent=size(item.file.size);const label=document.createElement('span');label.className=item.status;label.textContent=status(item);meta.append(bytes,label);detail.append(name,meta);
+        if(item.status==='uploading'||item.status==='success'){const progress=document.createElement('div');progress.className='progress';progress.setAttribute('role','progressbar');progress.setAttribute('aria-label',item.file.name+' 上傳進度');progress.setAttribute('aria-valuemin','0');progress.setAttribute('aria-valuemax','100');progress.setAttribute('aria-valuenow',String(item.percent));const bar=document.createElement('span');bar.style.width=item.percent+'%';progress.append(bar);detail.append(progress)}
+        li.append(icon,detail);
+        if(item.status==='success'){const done=document.createElement('span');done.className='done-icon';done.setAttribute('aria-label','已收件');done.innerHTML=icons.check;li.append(done)}else{const remove=document.createElement('button');remove.type='button';remove.className='remove';remove.disabled=busy;remove.setAttribute('aria-label','移除 '+item.file.name);remove.innerHTML=icons.remove;remove.addEventListener('click',()=>{items=items.filter(x=>x!==item);errors('');render()});li.append(remove)}list.append(li)
+      });
+      const remaining=items.filter(x=>x.status!=='success').length;const failed=items.some(x=>x.status==='failed');$('upload').disabled=busy||!config||!$('student').value||!remaining;$('upload').innerHTML=busy?'<span class="spinner" aria-hidden="true"></span><span>上傳中，請稍候…</span>':icons.check+'<span>'+(failed?'重試未完成檔案':remaining?'開始上傳（'+remaining+' 個檔案）':'開始上傳')+'</span>';
+      $('files').disabled=busy||!config||!$('student').value;$('student').disabled=busy||!config||(items.some(x=>x.status==='success')&&items.some(x=>x.status!=='success'));
+      if(!busy){const done=items.filter(x=>x.status==='success').length;const all=done>0&&done===items.length;$('summary').classList.toggle('success',all);$('summary').textContent=all?'已收到 '+done+' 個檔案，謝謝你！可以安心關閉頁面。':done?'已收到 '+done+' 個，尚有 '+remaining+' 個待完成。':'請等候「上傳成功」再關閉頁面。'}
+    }
+    async function signature(file){const b=new Uint8Array(await file.slice(0,40).arrayBuffer());const a=Array.from(b,v=>String.fromCharCode(v)).join('');const ext=file.name.split('.').pop().toLowerCase();return ext==='pdf'?a.startsWith('%PDF-'):['jpg','jpeg'].includes(ext)?b[0]===255&&b[1]===216&&b[2]===255:ext==='png'?Array.from(b.slice(0,8)).join(',')==='137,80,78,71,13,10,26,10':ext==='webp'?a.startsWith('RIFF')&&a.slice(8,12)==='WEBP':['heic','heif'].includes(ext)&&a.slice(4,8)==='ftyp'&&/heic|heix|hevc|hevx|mif1|msf1/.test(a.slice(8))}
+    async function addFiles(files){if(busy||!config||!$('student').value)return;const problems=[];for(const file of files){
+      if(items.length>=20){problems.push('一次最多 20 個檔案，請先完成這批上傳。');break}
+      if(!/\.(pdf|jpe?g|png|webp|heic|heif)$/i.test(file.name)){problems.push(file.name+'：請選擇照片或 PDF。');continue}
+      if(file.size>config.maxBytes||file.size===0){problems.push(file.name+'：'+(file.size===0?'檔案是空的。':'超過 10 MB 上限。'));continue}
+      if(items.some(x=>x.file.name===file.name&&x.file.size===file.size&&x.file.lastModified===file.lastModified))continue;
+      try{if(!await signature(file)){problems.push(file.name+'：檔案內容無法辨識，請選擇原始照片或 PDF。');continue}}catch(e){problems.push(file.name+'：無法讀取，請重新選檔。');continue}
+      items.push({file,status:'pending',percent:0,requestId:crypto.randomUUID().replace(/-/g,''),offset:0})
+    }errors(problems.join('\n'));$('files').value='';render()}
+    $('student').addEventListener('change',()=>{items=[];errors('');studentChanged()});$('files').addEventListener('change',e=>addFiles(e.target.files));
+    for(const event of ['dragenter','dragover'])$('drop').addEventListener(event,e=>{e.preventDefault();if(!busy)$('drop').classList.add('drag')});
+    for(const event of ['dragleave','drop'])$('drop').addEventListener(event,e=>{e.preventDefault();$('drop').classList.remove('drag')});
+    $('drop').addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+    window.addEventListener('dragover',e=>e.preventDefault());window.addEventListener('drop',e=>e.preventDefault());
+    function base64(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(new Error('無法讀取檔案，請重新選檔。'));reader.readAsDataURL(blob)})}
+    function apply(item,state){if(state.expired)throw new Error('上傳連線已到期，請按重試重新上傳。');if(!Number.isInteger(state.offset)||state.offset<0||state.offset>item.file.size)throw new Error('上傳進度無法確認，請重試。');item.offset=state.offset;item.percent=state.done?100:Math.min(99,Math.floor(state.offset/item.file.size*100));if(state.done){item.status='success';item.receipt=state.receipt}render()}
+    async function send(item){
+      item.status='uploading';item.error='';render();
+      if(item.started){const state=await call('getUploadStatus',item.requestId);if(state.expired){item.requestId=crypto.randomUUID().replace(/-/g,'');item.offset=0;item.started=false}else apply(item,state)}
+      if(!item.started){const state=await call('beginUpload',{studentId:$('student').value,name:item.file.name,size:item.file.size,requestId:item.requestId});item.started=true;apply(item,state)}
+      while(item.status!=='success'){
+        if(item.offset>=item.file.size)throw new Error('存檔結果待確認，請按重試查詢。');
+        const offset=item.offset;const data=await base64(item.file.slice(offset,offset+config.chunkBytes));
+        try{apply(item,await call('uploadChunk',item.requestId,offset,data))}catch(error){
+          if(/內容與副檔名|區塊|識別碼|雲端檔案確認/.test(error.message))throw error;
+          try{const state=await call('getUploadStatus',item.requestId);if(state.expired){item.started=false;throw error}apply(item,state);if(item.offset===offset&&item.status!=='success')throw error}catch(statusError){throw statusError}
+        }
+      }
+    }
+    $('upload').addEventListener('click',async()=>{if(busy)return;errors('');busy=true;$('summary').classList.remove('success');$('summary').textContent='檔案正在傳送，請保持頁面開啟。';render();for(const item of items.filter(x=>x.status!=='success')){try{await send(item)}catch(e){item.status='failed';item.error=e.message.replace(/^Error:\s*/,'');render()}}busy=false;render()});
+    window.addEventListener('beforeunload',e=>{if(busy){e.preventDefault();e.returnValue=''}});
+    (async()=>{try{config=await call('getConfig');$('student').replaceChildren();const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='請選擇你的名字';$('student').append(placeholder);for(const s of config.students){const option=document.createElement('option');option.value=s.id;option.textContent=s.course+' · '+s.name;$('student').append(option)}if(config.students.length===1)$('student').value=config.students[0].id;studentChanged()}catch(e){$('student').options[0].textContent='暫時無法載入名單';errors('暫時無法連線，請重新整理頁面。若仍無法使用，請聯絡老師。')}})();
+  </script>
+</body>
+</html>

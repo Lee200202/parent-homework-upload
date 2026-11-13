@@ -1,0 +1,7 @@
+.clasp.json
+.env*
+node_modules/
+qa/*.pdf
+qa/*.png
+qa/*.bin
+.local/

@@ -1,0 +1,9 @@
+{
+  "name": "math-parent-upload",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "preview": "python -m http.server 4173 --bind 127.0.0.1"
+  }
+}
