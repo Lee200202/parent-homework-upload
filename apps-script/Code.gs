@@ -133,6 +133,7 @@ function applyResponse_(state, response) {
   if (code === 200 || code === 201) {
     const file = JSON.parse(response.getContentText());
     if (!file.id || Number(file.size) !== state.size) throw new Error('雲端檔案確認失敗，請聯絡老師。');
+    state.receivedAt = state.receivedAt || new Date().toISOString();
     state.done = true; state.offset = state.size; state.fileId = file.id; state.md5 = file.md5Checksum || null;
   } else if (code === 308) {
     const headers = response.getAllHeaders();
@@ -150,7 +151,7 @@ function applyResponse_(state, response) {
 }
 
 function publicSession_(state) {
-  return { requestId: state.requestId, name: state.name, offset: state.offset, size: state.size, done: state.done, md5: state.done ? state.md5 || null : null, receipt: state.done ? state.requestId.slice(0, 8).toUpperCase() : null };
+  return { requestId: state.requestId, name: state.name, offset: state.offset, size: state.size, done: state.done, md5: state.done ? state.md5 || null : null, receivedAt: state.done ? state.receivedAt || null : null, receipt: state.done ? state.requestId.slice(0, 8).toUpperCase() : null };
 }
 function getSession_(key) {
   const text = CacheService.getScriptCache().get(key);

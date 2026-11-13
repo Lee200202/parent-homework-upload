@@ -8,7 +8,7 @@ function records_() {
 }
 function revision_() { return Number(PropertiesService.getScriptProperties().getProperty('configRevision') || 0); }
 function getAdminConfig() {
-  return { revision: revision_(), publishers: PUBLISHERS, academicYear: schoolContext_({baseGrade:8,baseAcademicYear:2026}).academicYear,
+  return { revision: revision_(), publishers: PUBLISHERS, catalogs:{nanyi:NANYI,kangxuan:KANGXUAN,hanlin:HANLIN}, academicYear: schoolContext_({baseGrade:8,baseAcademicYear:2026}).academicYear,
     students: records_().map(function(s) {
       return { id:s.id, name:s.name, greetingName:s.greetingName || s.name, grade:schoolContext_(s).grade,
         publisher:s.publisher || 'nanyi', active:s.active !== false,
