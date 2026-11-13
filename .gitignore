@@ -1,6 +1,7 @@
 .clasp.json
 .env*
 node_modules/
+qa/*.jfif
 qa/*.pdf
 qa/*.png
 qa/*.jpg
