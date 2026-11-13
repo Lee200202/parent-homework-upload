@@ -83,7 +83,7 @@
     $('theme').addEventListener('click',()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('math-upload-theme',document.documentElement.dataset.theme)}catch(e){}theme()});theme();
     function errors(text){$('errors').textContent=text;$('errors').hidden=!text}
     function studentChanged(){const s=selectedStudent();$('greeting').textContent=s?(s.greetingName||s.name)+'你好':'你好，歡迎回來';$('publisher-label').textContent=s?.publisherName||'請選擇學生';$('course').hidden=true;populateTerms();if(typeof historyStudentChanged==='function')historyStudentChanged()}
-    function size(n){return n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(1)+' MB'}
+    function size(n){return n<1024?n+' B':n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(1)+' MB'}
     function status(item){if(item.status==='success')return '上傳成功 · 收件碼 '+item.receipt;if(item.status==='failed')return item.error||'上傳未完成，請重試';if(item.status==='uploading')return item.percent===100?'正在確認存檔…':'正在接收 '+item.percent+'%';return '等待上傳'}
     function render(){
       const list=$('queue');list.replaceChildren();

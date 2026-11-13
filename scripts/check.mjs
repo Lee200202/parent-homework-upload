@@ -21,7 +21,7 @@ const context = vm.createContext({
   DriveApp: { getFolderById: id => { assert.equal(id, '18KkBjVH9lslNs7YmA83Vk2vm3SGqAy9X'); return root; } },
   ScriptApp: { getOAuthToken: () => 'test-only-token' },
   Utilities: { getUuid:()=>crypto.randomUUID(),formatDate: (date,tz,pattern) => pattern==='yyyy-MM-dd'?new Date(date.getTime()+28800000).toISOString().slice(0,10):'20261113_120000', base64Decode: s => [...Buffer.from(s, 'base64')] },
-  UrlFetchApp: { fetch: (url, options) => { requests.push({url,options}); if(response instanceof Error) throw response; return response; } }
+  UrlFetchApp: { fetch: (url, options) => { requests.push({url,options}); if(response instanceof Error) throw response; return typeof response === 'function' ? response(url,options) : response; } }
 });
 for(const file of ['PublisherCatalog.gs','Curriculum.gs','StudentSettings.gs','History.gs'])vm.runInContext(fs.readFileSync(new URL('../apps-script/'+file,import.meta.url),'utf8'),context);
 vm.runInContext(source, context);
@@ -102,7 +102,9 @@ run('saveAdminConfig({revision:admin.revision,students:admin.students})');assert
 assert.throws(()=>run('saveAdminConfig({revision:0,students:admin.students})'),/其他人更新/);
 assert.equal(run('studentConfig_({...records_()[0],publisher:"hanlin"}).terms[0].chapters[0][1][1][1]'),'多項式的加減');
 assert.throws(()=>run('managedFile_("other-student","valid-file-id")'),/有效的學生/);
-response=reply(200,{id:'valid-file-id',parents:['other-folder'],appProperties:{portal:'math-parent-upload',studentId:'huang-yun-xi'}});
-assert.throws(()=>run('trashUpload("huang-yun-xi","valid-file-id")'),/不屬於目前學生/);
+response=reply(200,{id:'valid-file-id',parents:['other-folder'],appProperties:{portal:'math-parent-upload',studentId:'huang-yun-xi',requestId:'abcdef0123456789abcdef0123456789'}});
+assert.throws(()=>run('trashUpload("huang-yun-xi","valid-file-id")'),/資料夾已變更/);
+response=url=>url.includes('files?q=')?reply(200,{files:[{id:'valid-file-id'}]}):reply(200,{id:'valid-file-id',appProperties:{portal:'math-parent-upload',studentId:'huang-yun-xi',requestId:'abcdef0123456789abcdef0123456789'}});
+assert.equal(run('managedFile_("huang-yun-xi","valid-file-id").id'),'valid-file-id');
 assert.throws(()=>run('notes_("x".repeat(2001))'),/2000/);
 console.log('PASS — Syntax; root destination; publisher catalogs; grade/semester boundaries; weekly deadlines; admin persistence/concurrency; notes and file scope; upload progress and retries.');

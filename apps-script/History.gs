@@ -18,7 +18,16 @@ function managedFile_(studentId,fileId) {
   checkedStudent_(studentId);
   if (typeof fileId !== 'string' || !/^[a-zA-Z0-9_-]{10,160}$/.test(fileId)) throw new Error('檔案識別碼無效。');
   const file=driveRequest_('files/'+fileId+'?fields=id,name,parents,trashed,appProperties,description,mimeType,size,webViewLink,modifiedTime');
-  if (file.trashed || !(file.parents || []).includes(SETTINGS.folderId) || !file.appProperties || file.appProperties.portal !== 'math-parent-upload' || file.appProperties.studentId !== studentId) throw new Error('這個檔案不屬於目前學生的繳交紀錄。');
+  if (file.trashed) throw new Error('檔案已移至垃圾桶，請重新整理紀錄。');
+  if (!file.appProperties || file.appProperties.portal !== 'math-parent-upload') throw new Error('這個檔案沒有本網站的繳交標記。');
+  if (file.appProperties.studentId !== studentId) throw new Error('這個檔案不屬於目前學生的繳交紀錄。');
+  const folderId=SETTINGS.folderId;
+  // Verify membership using the same fixed-folder query as the visible history.
+  const requestId=file.appProperties.requestId;
+  if (!/^[a-zA-Z0-9_-]{16,80}$/.test(requestId || '')) throw new Error('檔案收件標記無效。');
+  const q="'"+folderId+"' in parents and trashed=false and appProperties has { key='requestId' and value='"+requestId+"' }";
+  const scope=driveRequest_('files?q='+encodeURIComponent(q)+'&pageSize=100&fields=files(id)');
+  if (!(scope.files || []).some(function(item) {return item.id === fileId;})) throw new Error('檔案所在資料夾已變更，請重新整理紀錄。');
   return file;
 }
 function fileInfo_(file) {

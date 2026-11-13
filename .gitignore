@@ -3,6 +3,7 @@
 node_modules/
 qa/*.pdf
 qa/*.png
+qa/*.jpg
 qa/*.bin
 qa/*.mp4
 .local/
